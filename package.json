@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/felipereismonteiro/myWallet-back#readme",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dayjs": "^1.11.6",
     "dotenv": "^16.0.3",
