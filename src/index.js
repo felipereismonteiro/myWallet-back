@@ -27,7 +27,7 @@ const signInSchema = Joi.object({
 const signUpSchema = Joi.object({
   name: Joi.string().min(3).required(),
   email: Joi.string().email().required(),
-  password: Joi.required(),
+  password: Joi.required()
 });
 
 app.post("/sign-in", async (req, res) => {
@@ -64,9 +64,14 @@ app.post("/sign-up", async (req, res) => {
     const validate = await signUpSchema.validateAsync(user, {
       abortEarly: false,
     });
+
     const userFounded = await db
       .collection("users")
       .findOne({ $or: [{ name: user.name }, { email: user.email }] });
+
+    if(validate.password.length === 0) {
+      return res.status(400).send("Password is needed!!!")
+    }
 
     if (userFounded) {
       return res.status(401).send("Usuario ja cadastrado!");
@@ -78,7 +83,8 @@ app.post("/sign-up", async (req, res) => {
       .insertOne({ ...validate, password: hashPassword });
     res.sendStatus(201);
   } catch (err) {
-    res.send(err.details.map((detail) => detail.message));
+    console.log(err)
+    res.send(err.details);
   }
 });
 
