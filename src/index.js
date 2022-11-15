@@ -69,12 +69,10 @@ app.post("/sign-up", async (req, res) => {
       .collection("users")
       .findOne({ $or: [{ name: user.name }, { email: user.email }] });
 
-    if(validate.password.length === 0) {
-      return res.status(400).send("Password is needed!!!")
-    }
-
     if (userFounded) {
       return res.status(401).send("Usuario ja cadastrado!");
+    } else if(validate.password.length === 0) {
+      return res.status(400).send("Password is needed!!!")
     }
 
     const hashPassword = bcrypt.hashSync(req.body.password, 10);
