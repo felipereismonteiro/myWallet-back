@@ -27,7 +27,7 @@ const signInSchema = Joi.object({
 const signUpSchema = Joi.object({
   name: Joi.string().min(3).required(),
   email: Joi.string().email().required(),
-  password: Joi.required()
+  password: Joi.required(),
 });
 
 app.post("/sign-in", async (req, res) => {
@@ -42,18 +42,18 @@ app.post("/sign-in", async (req, res) => {
     if (!founded) {
       return res.status(404).send("Email not found");
     } else if (!bcrypt.compareSync(password, founded.password)) {
-      return res.status(401).send("Password doesn`t match");
+      return res.status(401).send("Wrong password!!!");
     }
 
     const token = uuid();
     await db
       .collection("usersTokens")
-      .insertOne({ id: founded._id, token, lastStatus: Date.now() });
+      .insertOne({ id: founded._id, token, lastStatus: Date.now()});
 
-    res.status(200).send("logged");
+    res.status(200).send(token);
   } catch (err) {
     console.log(err);
-    return res.send(err.details.map((detail) => detail.message));
+    return res.status(401).send(err.details.map((detail) => detail.message));
   }
 });
 
@@ -71,8 +71,8 @@ app.post("/sign-up", async (req, res) => {
 
     if (userFounded) {
       return res.status(401).send("Usuario ja cadastrado!");
-    } else if(validate.password.length === 0) {
-      return res.status(400).send("Password is needed!!!")
+    } else if (validate.password.length === 0) {
+      return res.status(400).send("Password is needed!!!");
     }
 
     const hashPassword = bcrypt.hashSync(req.body.password, 10);
@@ -81,9 +81,41 @@ app.post("/sign-up", async (req, res) => {
       .insertOne({ ...validate, password: hashPassword });
     res.sendStatus(201);
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.send(err.details);
   }
 });
+
+app.put("/update", async (req, res) => {
+  const {lastStatus} = req.body;
+  const {authorization} = req.headers;
+  const token = authorization.replace("Bearer ", "")
+  const founded = await db.collection("usersTokens").findOne({token})
+
+  console.log(founded);
+
+  if(!founded) {
+    return res.sendStatus(401);
+  }
+
+  try {
+    await db.collection("usersTokens").updateOne({token}, {$set: {lastStatus}})
+    res.sendStatus(200);
+  } catch(err) {
+    console.log(err);
+  }
+});
+
+setInterval(async () => {
+  const tokens = await db.collection("usersTokens").find().toArray();
+  const filteredTokens = tokens.filter(t => Date.now() - t.lastStatus >= 10000);
+
+  try { 
+    filteredTokens.map(t => db.collection("usersTokens").deleteOne({_id: t._id}))
+  } catch(err) {
+    console.log(err);
+  }
+
+}, 15000);
 
 app.listen(5000, () => console.log("Server on port:5000"));
