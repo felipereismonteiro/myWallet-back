@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import bcrypt from "bcrypt";
-import { dbUsers, dbUsersTokens, signInSchema, signUpSchema} from "../index.js"
+import { db, dbUsers, dbUsersTokens, signInSchema, signUpSchema} from "../index.js"
 
 export async function signIn (req, res){
     const user = req.body;

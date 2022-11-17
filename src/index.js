@@ -3,7 +3,13 @@ import Joi from "joi";
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import { signIn, signUp, updateToken, deleteInactiveTokens } from "./controllers/authControllers.js"
+import {
+  signIn,
+  signUp,
+  updateToken,
+  deleteInactiveTokens,
+} from "./controllers/authControllers.js";
+import { entryPost } from "./controllers/dataControllers.js";
 dotenv.config();
 
 const app = express();
@@ -11,7 +17,7 @@ app.use(express.json());
 app.use(cors());
 
 const mongoClient = new MongoClient(process.env.MONGO_URI);
-let db;
+export let db;
 
 await mongoClient.connect();
 db = mongoClient.db("myWallet");
@@ -37,5 +43,9 @@ app.post("/sign-up", signUp);
 app.put("/update", updateToken);
 
 setInterval(deleteInactiveTokens, 15000);
+
+app.post("/entry", entryPost);
+
+app.post("/exit");
 
 app.listen(5000, () => console.log("Server on port:5000"));
