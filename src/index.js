@@ -9,7 +9,7 @@ import {
   updateToken,
   deleteInactiveTokens,
 } from "./controllers/authControllers.js";
-import { entryPost, exitPost } from "./controllers/dataControllers.js";
+import { entryPost, exitPost, getEntry, getExit } from "./controllers/dataControllers.js";
 dotenv.config();
 
 const app = express();
@@ -41,16 +41,16 @@ export const exitSchema = Joi.object({
   value: Joi.number().required(),
   description: Joi.string().required(),
   typeof: Joi.string().required(),
-  date: Joi.string().min(3).required()
-})
+  date: Joi.string().min(3).required(),
+});
 
 export const entrySchema = Joi.object({
   name: Joi.string().required(),
   value: Joi.number().required(),
   description: Joi.string().required(),
   typeof: Joi.string().required(),
-  date: Joi.string().min(3).required()
-})
+  date: Joi.string().min(3).required(),
+});
 
 app.post("/sign-in", signIn);
 
@@ -63,5 +63,9 @@ setInterval(deleteInactiveTokens, 10000);
 app.post("/entry", entryPost);
 
 app.post("/exit", exitPost);
+
+app.get("/entry", getEntry);
+
+app.get("/exit", getExit);
 
 app.listen(5000, () => console.log("Server on port:5000"));
