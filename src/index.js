@@ -17,6 +17,7 @@ await mongoClient.connect();
 db = mongoClient.db("myWallet");
 
 export const dbUsers = db.collection("users");
+export const dbUsersTokens = db.collection("usersTokens");
 
 export const signInSchema = Joi.object({
   email: Joi.string().email().required(),

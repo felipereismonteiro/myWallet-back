@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import bcrypt from "bcrypt";
-import { dbUsers, signInSchema, signUpSchema} from "../index.js"
+import { dbUsers, dbUsersTokens, signInSchema, signUpSchema} from "../index.js"
 
 export async function signIn (req, res){
     const user = req.body;
@@ -62,16 +62,14 @@ export async function updateToken(req, res){
     const {lastStatus} = req.body;
     const {authorization} = req.headers;
     const token = authorization.replace("Bearer ", "")
-    const founded = await db.collection("usersTokens").findOne({token})
-  
-    console.log(founded);
+    const founded = await dbUsersTokens.findOne({token})
   
     if(!founded) {
       return res.sendStatus(401);
     }
   
     try {
-      await db.collection("usersTokens").updateOne({token}, {$set: {lastStatus}})
+      await dbUsersTokens.updateOne({token}, {$set: {lastStatus}})
       res.sendStatus(200);
     } catch(err) {
       console.log(err);
@@ -79,11 +77,11 @@ export async function updateToken(req, res){
 }
 
 export async function deleteInactiveTokens (){
-    const tokens = await db.collection("usersTokens").find().toArray();
+    const tokens = await dbUsersTokens.find().toArray();
     const filteredTokens = tokens.filter(t => Date.now() - t.lastStatus >= 10000);
   
     try { 
-      filteredTokens.map(t => db.collection("usersTokens").deleteOne({_id: t._id}))
+      filteredTokens.map(t => dbUsersTokens.deleteOne({_id: t._id}))
     } catch(err) {
       console.log(err);
     }
