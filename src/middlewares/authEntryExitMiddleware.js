@@ -1,7 +1,10 @@
 import { entrySchema, exitSchema } from "../models/dataSchemas.js";
 import dayjs from "dayjs";
+import { db, dbUsers, dbUsersTokens } from "../db.js";
 
 export async function validateEntryPost(req, res, next) {
+  console.log(req.body)
+
   try {
     const token = req.headers.authorization.replace("Bearer ", "");
     const { value, description } = req.body;
@@ -40,6 +43,7 @@ export async function validateExitPost(req, res, next) {
     
         const tokenFounded = await dbUsersTokens.findOne({ token });
         const { name } = await dbUsers.findOne({ _id: tokenFounded.id });
+  
     
         if (!tokenFounded) {
           return res.sendStatus(404);

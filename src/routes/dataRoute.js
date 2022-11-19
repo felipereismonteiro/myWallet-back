@@ -5,6 +5,7 @@ import {
   getEntry,
   getExit,
 } from "../controllers/dataControllers.js";
+import { validateEntryPost, validateExitPost } from "../middlewares/authEntryExitMiddleware.js";
 import {
   authGetEntry,
   authGetExit,
@@ -12,9 +13,9 @@ import {
 
 const dataRoute = Router();
 
-dataRoute.post("/entry", entryPost);
+dataRoute.post("/entry", validateEntryPost, entryPost);
 
-dataRoute.post("/exit", exitPost);
+dataRoute.post("/exit", validateExitPost, exitPost);
 
 dataRoute.get("/entry", authGetEntry, getEntry);
 

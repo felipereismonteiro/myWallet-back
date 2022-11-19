@@ -1,7 +1,6 @@
 import {dbUsersTokens, dbUsers} from "../db.js"
 
 export async function authGetEntry(req, res, next) {
-    console.log(req.headers)
     try {
         const token = req.headers.authorization.replace("Bearer ", "");
 
@@ -22,6 +21,7 @@ export async function authGetEntry(req, res, next) {
 }
 
 export async function authGetExit(req, res, next) {
+    console.log(req.headers);
     try {
         const token = req.headers.authorization.replace("Bearer ", "");
         const tokenFounded = await dbUsersTokens.findOne({ token });
