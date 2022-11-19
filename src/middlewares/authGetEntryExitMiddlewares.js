@@ -1,4 +1,7 @@
+import {dbUsersTokens, dbUsers} from "../db.js"
+
 export async function authGetEntry(req, res, next) {
+    console.log(req.headers)
     try {
         const token = req.headers.authorization.replace("Bearer ", "");
 
