@@ -36,7 +36,7 @@ export async function signUp(req, res) {
 export async function updateToken(req, res) {
   try {
     const { lastStatus } = req.body;
-    const token = req.token;
+    const { token } = req.token;
     await dbUsersTokens.updateOne({ token }, { $set: { lastStatus } });
     res.sendStatus(200);
   } catch (err) {

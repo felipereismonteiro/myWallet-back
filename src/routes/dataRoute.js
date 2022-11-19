@@ -1,20 +1,23 @@
-import express from "express";
-import { entrySchema, exitSchema } from "../models/dataSchemas.js";
+import { Router } from "express";
 import {
-    entryPost,
-    exitPost,
-    getEntry,
-    getExit,
-  } from "../controllers/dataControllers.js";
+  entryPost,
+  exitPost,
+  getEntry,
+  getExit,
+} from "../controllers/dataControllers.js";
+import {
+  authGetEntry,
+  authGetExit,
+} from "../middlewares/authGetEntryExitMiddlewares.js";
 
-const dataRoute = express.Router();
+const dataRoute = Router();
 
 dataRoute.post("/entry", entryPost);
 
 dataRoute.post("/exit", exitPost);
 
-dataRoute.get("/entry", getEntry);
+dataRoute.get("/entry", authGetEntry, getEntry);
 
-dataRoute.get("/exit", getExit);
+dataRoute.get("/exit", authGetExit, getExit);
 
 export default dataRoute;
