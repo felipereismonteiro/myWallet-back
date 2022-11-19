@@ -3,8 +3,6 @@ import dayjs from "dayjs";
 import { db, dbUsers, dbUsersTokens } from "../db.js";
 
 export async function validateEntryPost(req, res, next) {
-  console.log(req.body)
-
   try {
     const token = req.headers.authorization.replace("Bearer ", "");
     const { value, description } = req.body;
