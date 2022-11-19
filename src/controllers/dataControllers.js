@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import { db, dbUsers, dbUsersTokens } from "../index.js";
-import { entrySchema, exitSchema } from "../index.js";
+import { db, dbUsers, dbUsersTokens } from "../db.js";
+import { entrySchema, exitSchema } from "../models/dataSchemas.js";
 
 export async function entryPost(req, res) {
   const token = req.headers.authorization.replace("Bearer ", "");
@@ -70,9 +70,9 @@ export async function getEntry(req, res) {
       return res.sendStatus(404);
     }
 
-    const { name } = await dbUsers.findOne({_id: tokenFounded.id})
+    const { name } = await dbUsers.findOne({ _id: tokenFounded.id });
 
-    const entries = await db.collection("userEntries").find({name}).toArray();
+    const entries = await db.collection("userEntries").find({ name }).toArray();
     res.status(200).send(entries);
   } catch (error) {
     console.log(error);
@@ -81,7 +81,7 @@ export async function getEntry(req, res) {
 }
 
 export async function getExit(req, res) {
-const token = req.headers.authorization.replace("Bearer ", "");
+  const token = req.headers.authorization.replace("Bearer ", "");
 
   try {
     const tokenFounded = await dbUsersTokens.findOne({ token });
@@ -90,9 +90,9 @@ const token = req.headers.authorization.replace("Bearer ", "");
       return res.sendStatus(404);
     }
 
-    const { name } = await dbUsers.findOne({_id: tokenFounded.id})
+    const { name } = await dbUsers.findOne({ _id: tokenFounded.id });
 
-    const exits = await db.collection("userExits").find({name}).toArray();
+    const exits = await db.collection("userExits").find({ name }).toArray();
     res.status(200).send(exits);
   } catch (error) {
     console.log(error);
