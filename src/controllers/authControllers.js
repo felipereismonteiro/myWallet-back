@@ -4,7 +4,7 @@ import { db, dbUsersTokens } from "../db.js";
 
 export async function signIn(req, res) {
   try {
-    const { _id } = req.user;
+    const { _id, name } = req.user;
 
     const token = uuid();
     await dbUsersTokens.insertOne({
@@ -13,7 +13,12 @@ export async function signIn(req, res) {
       lastStatus: Date.now(),
     });
 
-    res.status(200).send(token);
+    const obj = {
+      token,
+      name
+    }
+
+    res.status(200).send(obj);
   } catch (err) {
     console.log(err);
     return res.status(401).send(err.details.map((detail) => detail.message));
