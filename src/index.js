@@ -13,4 +13,6 @@ app.use(dataRoute);
 
 setInterval(deleteInactiveTokens, 10000);
 
-app.listen(5000, () => console.log("Server on port:5000"));
+const port = process.env.PORT
+
+app.listen(port, () => console.log(`Server on port:${port}`));
